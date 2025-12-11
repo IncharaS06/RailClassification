@@ -6,7 +6,7 @@ from flask import Flask, request, redirect
 
 # ================== CONFIG ==================
 
-MODEL_PATH = r"D:/7th Sem @vvce/SIH2025/Software/vimarsha/railway_station/runs/detect/train/weights/best.onnx"
+MODEL_PATH = r"best.onnx"
 
 # EXACTLY as in railway_station/data.yaml
 CLASS_NAMES = [
