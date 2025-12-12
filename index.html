@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Track Fitting Element Verification</title>
+
+    <style>
+      :root{
+        --bg1:#f7e8ff;
+        --bg2:#fdfbff;
+        --bg3:#e4d4ff;
+
+        --card:#ffffff;
+        --text:#2b1d4f;
+        --muted:#6b647a;
+
+        --primary:#8b5cf6;   /* purple button */
+        --primary2:#7c3aed;  /* hover */
+        --pill:#f1e8ff;      /* light purple bar */
+        --border:#eadcff;
+
+        --okBg:#dcfce7;
+        --okText:#166534;
+        --noBg:#fee2e2;
+        --noText:#991b1b;
+      }
+
+      * { box-sizing: border-box; }
+      body{
+        margin:0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+        color:var(--text);
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:24px;
+        background: radial-gradient(1200px 600px at 20% 10%, var(--bg1), transparent 60%),
+                    radial-gradient(1000px 700px at 80% 30%, var(--bg3), transparent 55%),
+                    linear-gradient(135deg, var(--bg1), var(--bg2));
+      }
+
+      .wrap{
+        width:min(820px, 100%);
+        display:flex;
+        justify-content:center;
+      }
+
+      .card{
+        width:min(720px, 100%);
+        background: rgba(255,255,255,0.85);
+        border: 1px solid rgba(234,220,255,0.8);
+        border-radius: 26px;
+        box-shadow: 0 20px 60px rgba(32, 10, 80, 0.12);
+        padding: 32px 34px;
+        backdrop-filter: blur(8px);
+      }
+
+      h1{
+        margin:0 0 10px 0;
+        font-size: 28px;
+        line-height: 1.2;
+        letter-spacing: -0.3px;
+        color: #3d2a6e;
+        font-weight: 800;
+      }
+
+      .sub{
+        margin:0 0 18px 0;
+        color:var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+        max-width: 560px;
+      }
+
+      .meta{
+        margin: 0 0 18px 0;
+        font-size: 13px;
+        color:#5b4f76;
+        background: rgba(241,232,255,0.7);
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        border-radius: 14px;
+        display:flex;
+        gap:8px;
+        align-items:center;
+        width: fit-content;
+      }
+      .meta b{ color:#3d2a6e; }
+
+      .row{
+        display:flex;
+        flex-direction:column;
+        gap:14px;
+        margin-top: 6px;
+      }
+
+      .file{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        flex-wrap:wrap;
+      }
+
+      input[type="file"]{
+        font-size: 13px;
+      }
+      input[type="file"]::file-selector-button{
+        border: 1px solid var(--border);
+        background: #ffffff;
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor:pointer;
+      }
+
+      .btn{
+        width:100%;
+        border:none;
+        background: linear-gradient(90deg, var(--primary), #a855f7);
+        color:white;
+        padding: 14px 16px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 15px;
+        cursor:pointer;
+        box-shadow: 0 12px 24px rgba(139, 92, 246, 0.25);
+        transition: transform .08s ease, filter .15s ease;
+      }
+      .btn:hover{ filter: brightness(0.98); }
+      .btn:active{ transform: scale(0.99); }
+      .btn:disabled{
+        opacity: 0.55;
+        cursor:not-allowed;
+        box-shadow:none;
+      }
+
+      .pill{
+        margin-top: 6px;
+        background: rgba(241,232,255,0.9);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 14px 16px;
+        font-size: 14px;
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .pill .label{
+        color:#4b3a7a;
+        font-weight: 800;
+      }
+
+      .kv{
+        display:flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .kv span{
+        color:#4b3a7a;
+      }
+      .kv b{
+        color:#2b1d4f;
+      }
+
+      .statusBadge{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding:6px 10px;
+        border-radius:999px;
+        font-size:12px;
+        font-weight:900;
+        border:1px solid transparent;
+        white-space: nowrap;
+      }
+      .ok{ background: var(--okBg); color: var(--okText); border-color: rgba(22,101,52,0.15); }
+      .no{ background: var(--noBg); color: var(--noText); border-color: rgba(153,27,27,0.15); }
+
+      .error{
+        margin-top: 10px;
+        color: var(--noText);
+        background: rgba(254,226,226,0.7);
+        border:1px solid rgba(153,27,27,0.18);
+        padding: 10px 12px;
+        border-radius: 14px;
+        font-size: 13px;
+        display:none;
+      }
+
+      .hint{
+        margin-top: 10px;
+        font-size: 12px;
+        color:#7a728f;
+      }
+
+      .spin{
+        width:16px;height:16px;border-radius:999px;
+        border:2px solid rgba(255,255,255,0.7);
+        border-top-color: rgba(255,255,255,0.0);
+        display:inline-block;
+        animation: spin 1s linear infinite;
+        vertical-align: middle;
+        margin-right: 8px;
+      }
+      @keyframes spin { to { transform: rotate(360deg);} }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <h1>Track Fitting Element Verification</h1>
+        <p class="sub">
+          Upload a Jio-tag or track fitting image. The AI will identify whether it is
+          ERC, Liner, Pad, Sleeper, Clip or Bolt.
+        </p>
+
+        <div class="meta">
+          <b>Material ID:</b> <span id="material-id">Loading…</span>
+        </div>
+
+        <div class="row">
+          <div class="file">
+            <input type="file" id="image" accept="image/*" />
+          </div>
+
+          <button class="btn" id="runBtn">
+            Run AI Check
+          </button>
+
+          <div class="pill" id="resultPill" style="display:none;">
+            <div class="kv">
+              <span class="label">Detected:</span> <b id="detectedTxt">—</b>
+              <span class="label">Confidence:</span> <b id="confTxt">—</b>
+            </div>
+            <span class="statusBadge" id="statusBadge">—</span>
+          </div>
+
+          <div class="error" id="errBox"></div>
+          <div class="hint" id="hintText"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      // ✅ your firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyABgManZ9LUxUhDXSq8a7WZfqw0qoTclQo",
+        authDomain: "track-system-free.firebaseapp.com",
+        projectId: "track-system-free",
+        storageBucket: "track-system-free.appspot.com",
+        messagingSenderId: "849936533226",
+        appId: "1:849936533226:web:a06033aa6c2a77d3737993",
+      };
+
+      function getFirebaseApp() {
+        if (!getApps().length) return initializeApp(firebaseConfig);
+        return getApp();
+      }
+
+      const app = getFirebaseApp();
+      const db = getFirestore(app);
+
+      const params = new URLSearchParams(window.location.search);
+      const materialId = params.get("materialId");
+
+      const materialIdSpan = document.getElementById("material-id");
+      const runBtn = document.getElementById("runBtn");
+      const imgInput = document.getElementById("image");
+
+      const resultPill = document.getElementById("resultPill");
+      const detectedTxt = document.getElementById("detectedTxt");
+      const confTxt = document.getElementById("confTxt");
+      const statusBadge = document.getElementById("statusBadge");
+
+      const errBox = document.getElementById("errBox");
+      const hintText = document.getElementById("hintText");
+
+      function showError(msg){
+        errBox.style.display = "block";
+        errBox.textContent = msg;
+      }
+      function clearError(){
+        errBox.style.display = "none";
+        errBox.textContent = "";
+      }
+
+      if (!materialId) {
+        materialIdSpan.textContent = "❌ Missing materialId in URL";
+        hintText.textContent = "Open like: /verify?materialId=MAT-123";
+        runBtn.disabled = true;
+      } else {
+        materialIdSpan.textContent = materialId;
+        hintText.textContent = "";
+      }
+
+      runBtn.addEventListener("click", async () => {
+        clearError();
+
+        if (!materialId) return;
+
+        const file = imgInput.files?.[0];
+        if (!file) {
+          showError("Please choose an image file first.");
+          return;
+        }
+
+        runBtn.disabled = true;
+        runBtn.innerHTML = `<span class="spin"></span>Running AI Check…`;
+        resultPill.style.display = "none";
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+          // ✅ ONLY /verify (your Flask)
+          const res = await fetch("/verify", { method: "POST", body: formData });
+          const data = await res.json();
+
+          if (!res.ok || !data.ok) {
+            showError(data.error || "AI verification failed.");
+            runBtn.disabled = false;
+            runBtn.textContent = "Run AI Check";
+            return;
+          }
+
+          const component = data.component ?? null;
+          const confidencePercent = Number(data.confidencePercent || 0);
+          const verified = confidencePercent > 40;
+
+          detectedTxt.textContent = component ? component.toUpperCase() : "NOT DETECTED";
+          confTxt.textContent = (confidencePercent || 0).toFixed(2);
+
+          statusBadge.className = "statusBadge " + (verified ? "ok" : "no");
+          statusBadge.textContent = verified ? "VERIFIED ✅" : "NOT VERIFIED ❌";
+
+          resultPill.style.display = "flex";
+
+          // ✅ Firestore write from UI
+          await setDoc(
+            doc(db, "ai_varification", materialId),
+            {
+              materialId,
+              component,
+              confidencePercent,
+              verified,
+              status: component ? (verified ? "verified" : "low_confidence") : "not_detected",
+              aiVerifiedAt: serverTimestamp(),
+            },
+            { merge: true }
+          );
+
+          runBtn.disabled = false;
+          runBtn.textContent = "Run AI Check";
+        } catch (e) {
+          showError("Network error. Make sure Flask is running on 127.0.0.1:5000");
+          runBtn.disabled = false;
+          runBtn.textContent = "Run AI Check";
+        }
+      });
+    </script>
+  </body>
+</html>
